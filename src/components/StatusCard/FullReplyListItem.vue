@@ -1,17 +1,17 @@
 <template>
   <div class="full-reply-list-item" v-loading="isListItemLoading" @mouseover="onItemMouseOver" @mouseout="onItemMouseOut">
     <div class="left-area">
-      <mu-avatar class="status-replier-avatar" slot="avatar" size="34">
+      <mu-avatar @click="onCheckUserAccountPage" class="status-replier-avatar" slot="avatar" size="34">
         <img :src="status.account.avatar_static">
       </mu-avatar>
     </div>
     <div class="center-area">
 
       <div class="reply-user-display-name">
-        <p class="primary-read-text-color">
-          <span class="display-name" v-html="formatAccountDisplayName(status.account)"></span>
+        <a @click="onCheckUserAccountPage" class="primary-read-text-color">
+          <span class="display-name" v-html="status.account.display_name"></span>
           <span class="at-name secondary-read-text-color">@{{getAccountAtName(status.account)}}</span>
-        </p>
+        </a>
         <span v-if="status.favourites_count > 0"
               class="reply-favorites-count"
               :class="[ status.favourited ? 'primary-theme-text-color' : 'secondary-read-text-color' ]">
@@ -19,7 +19,7 @@
                 </span>
       </div>
 
-      <mu-card-text class="status-content full-reply-status-content" v-html="formatStatusContent(status)"></mu-card-text>
+      <mu-card-text class="status-content full-reply-status-content" v-html="status.content"></mu-card-text>
 
       <div class="full-reply-attachment-area">
         <media-panel :mediaList="status.media_attachments" :pixivCards="status.pixiv_cards" :sensitive="status.sensitive"/>
@@ -39,7 +39,7 @@
       </div>
 
     </div>
-    <div class="right-area">
+    <div class="right-area" ref="rightArea" :style="rightAreaStyle">
       <span v-show="!shouldOpenMoreOperationPopOver && !shouldShowMoreOperationTriggerBtn" class="reply-from-now secondary-read-text-color">{{getFromNowTime()}}</span>
       <mu-button v-show="shouldOpenMoreOperationPopOver || shouldShowMoreOperationTriggerBtn" icon style="width: 16px; height: 16px" @click="onOpenMoreOperationPopOver">
         <mu-icon class="header-icon secondary-read-text-color" value="more_vert"/>
@@ -62,7 +62,7 @@
 <script lang="ts">
   import { Vue, Component, Prop } from 'vue-property-decorator'
   import { Getter, Action, State } from 'vuex-class'
-  import { formatStatusContent, formatAccountDisplayName, getVisibilityDescInfo } from '@/util'
+  import { getVisibilityDescInfo } from '@/util'
   import * as moment from 'moment'
   import { mastodonentities } from "@/interface"
   import MediaPanel from './MediaPanel'
@@ -73,6 +73,10 @@
     }
   })
   class FullReplyListItem extends Vue {
+
+    $refs: {
+      rightArea: HTMLDivElement
+    }
 
     $confirm
 
@@ -89,15 +93,20 @@
 
     @Getter('getAccountAtName') getAccountAtName
 
-    formatStatusContent = formatStatusContent
-
-    formatAccountDisplayName = formatAccountDisplayName
-
     isListItemLoading: boolean = false
 
     shouldShowMoreOperationTriggerBtn: boolean = false
     shouldOpenMoreOperationPopOver: boolean = false
     moreOperationTriggerBtn = null
+
+    rightAreaStyle = null
+
+    mounted () {
+      this.rightAreaStyle = {
+        // todo 2 is magic number
+        width: `${this.$refs.rightArea.clientWidth + 2}px`
+      }
+    }
 
     getFromNowTime () {
       return moment(this.status.created_at).fromNow(true)
@@ -117,6 +126,10 @@
     onOpenMoreOperationPopOver (e) {
       this.moreOperationTriggerBtn = e.target
       this.shouldOpenMoreOperationPopOver = true
+    }
+
+    onCheckUserAccountPage () {
+      window.open(this.status.account.url, "_blank")
     }
 
     async onDeleteStatus () {
@@ -149,6 +162,10 @@
     display: flex;
     padding: 12px 16px;
 
+    .status-replier-avatar {
+      cursor: pointer;
+    }
+
     .center-area {
       flex-grow: 1;
       margin: 0 10px 0 16px;
@@ -160,12 +177,13 @@
         display: flex;
         align-items: center;
 
-        > p {
+        > a {
           margin: 0;
           font-size: 15px;
           font-weight: 500;
           text-overflow: ellipsis;
           overflow: hidden;
+          cursor: pointer;
         }
 
         .reply-favorites-count {
@@ -208,8 +226,7 @@
 
     .right-area {
       display: flex;
-      flex-shrink: 0;
-      width: 38px;
+      flex-direction: row-reverse;
 
       .reply-from-now {
         font-size: 13px;

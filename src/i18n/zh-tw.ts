@@ -41,10 +41,15 @@ const statusCard = {
 const drawer = {
   [I18nTags.drawer.home]: '首頁',
   [I18nTags.drawer.public]: '聯盟時間軸',
+  [I18nTags.drawer.local]: '本地時間軸',
   [I18nTags.drawer.tag]: '主題標籤',
   [I18nTags.drawer.profile]: '個人資料',
   [I18nTags.drawer.settings]: '設定',
-  [I18nTags.drawer.toHostInstance]: '前往當前實例站點'
+  [I18nTags.drawer.logout]: '登出',
+  [I18nTags.drawer.toHostInstance]: '前往當前實例站點',
+  [I18nTags.drawer.search_input_placeholder]: '搜索',
+  [I18nTags.drawer.search_result_people_label]: '用戶',
+  [I18nTags.drawer.search_result_hashtag_label]: '話題標籤'
 }
 
 const settings = {
@@ -55,7 +60,8 @@ const settings = {
   [I18nTags.settings.show_sensitive_media_files]: '總是顯示標記為敏感的媒體文件：',
   [I18nTags.settings.auto_load_new_status]: '總是自動加載最新嘟文：',
   [I18nTags.settings.stream_label]: '訊息串',
-  [I18nTags.settings.media_label]: '媒體內容'
+  [I18nTags.settings.media_label]: '媒體內容',
+  [I18nTags.settings.personality_label]: '個人化'
 }
 
 const timeLines = {
@@ -66,7 +72,12 @@ const timeLines = {
 const postStatusDialog = {
   [I18nTags.postStatusDialog.do_discard_message_confirm]: '確定要捨棄這則訊息嗎？',
   [I18nTags.postStatusDialog.do_keep_message]: '保留',
-  [I18nTags.postStatusDialog.do_discard_message]: '捨棄'
+  [I18nTags.postStatusDialog.do_discard_message]: '捨棄',
+  [I18nTags.postStatusDialog.text_character_limit_exceed]: '內容超出500個字符的限制了'
+}
+
+const notifications = {
+  [I18nTags.notifications.someone_followed_you]: '{displayName} 關注了你'
 }
 
 export default {
@@ -76,5 +87,6 @@ export default {
   ...timeLines,
   ...drawer,
   ...settings,
-  ...postStatusDialog
+  ...postStatusDialog,
+  ...notifications
 }

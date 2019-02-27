@@ -17,6 +17,7 @@ declare module "vue/types/vue" {
       defaulttimelines: routerInfo
       tagtimelines: routerInfo
       listtimelines: routerInfo
+      accounts: routerInfo
     }
 
     $i18nTags: {
@@ -60,6 +61,9 @@ declare module "vue/types/vue" {
         profile: string
         settings: string
         toHostInstance: string
+        search_input_placeholder: string
+        search_result_people_label: string
+        search_result_hashtag_label: string
       },
       settings: {
         general_label: string
@@ -70,6 +74,7 @@ declare module "vue/types/vue" {
         auto_load_new_status: string
         stream_label: string
         media_label: string
+        personality_label: string
       },
       home: {
 
@@ -87,6 +92,10 @@ declare module "vue/types/vue" {
         do_discard_message_confirm: string
         do_keep_message: string
         do_discard_message: string
+        text_character_limit_exceed: string
+      },
+      notifications: {
+        someone_followed_you: string
       }
     }
 

@@ -41,10 +41,15 @@ const statusCard = {
 const drawer = {
   [I18nTags.drawer.home]: '主页',
   [I18nTags.drawer.public]: '公共',
+  [I18nTags.drawer.local]: '本站时间轴',
   [I18nTags.drawer.tag]: '标签',
   [I18nTags.drawer.profile]: '个人资料',
   [I18nTags.drawer.settings]: '设置',
-  [I18nTags.drawer.toHostInstance]: '打开当前实例站点'
+  [I18nTags.drawer.logout]: '登出',
+  [I18nTags.drawer.toHostInstance]: '打开当前实例站点',
+  [I18nTags.drawer.search_input_placeholder]: '搜索',
+  [I18nTags.drawer.search_result_people_label]: '用户',
+  [I18nTags.drawer.search_result_hashtag_label]: '话题标签'
 }
 
 const settings = {
@@ -55,7 +60,8 @@ const settings = {
   [I18nTags.settings.show_sensitive_media_files]: '总是显示标记为敏感的媒体文件：',
   [I18nTags.settings.auto_load_new_status]: '总是自动加载新的嘟文：',
   [I18nTags.settings.stream_label]: '信息流',
-  [I18nTags.settings.media_label]: '媒体内容'
+  [I18nTags.settings.media_label]: '媒体内容',
+  [I18nTags.settings.personality_label]: '个性化'
 }
 
 const timeLines = {
@@ -66,7 +72,12 @@ const timeLines = {
 const postStatusDialog = {
   [I18nTags.postStatusDialog.do_discard_message_confirm]: '要舍弃这条信息吗？',
   [I18nTags.postStatusDialog.do_keep_message]: '保留',
-  [I18nTags.postStatusDialog.do_discard_message]: '舍弃'
+  [I18nTags.postStatusDialog.do_discard_message]: '舍弃',
+  [I18nTags.postStatusDialog.text_character_limit_exceed]: '内容超过500个字符的限制了'
+}
+
+const notifications = {
+  [I18nTags.notifications.someone_followed_you]: '{displayName} 关注了你'
 }
 
 export default {
@@ -76,5 +87,6 @@ export default {
   ...timeLines,
   ...drawer,
   ...settings,
-  ...postStatusDialog
+  ...postStatusDialog,
+  ...notifications
 }

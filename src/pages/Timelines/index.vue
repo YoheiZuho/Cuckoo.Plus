@@ -46,7 +46,7 @@
 <script lang="ts">
   import { Vue, Component, Watch } from 'vue-property-decorator'
   import { Action, State, Getter } from 'vuex-class'
-  import { TimeLineTypes } from '@/constant'
+  import { TimeLineTypes, UiWidthCheckConstants } from '@/constant'
   import { cuckoostore, mastodonentities } from '@/interface'
   import { getTimeLineTypeAndHashName, isBaseTimeLine } from '@/util'
   import StatusCard from '@/components/StatusCard'
@@ -119,9 +119,8 @@
 
     get allTimeLineNameList (): Array<string> {
       const result = [
-        TimeLineTypes.HOME, TimeLineTypes.PUBLIC
-      ].filter(type => this.timelines[type].length);
-
+        TimeLineTypes.HOME, TimeLineTypes.PUBLIC, TimeLineTypes.LOCAL
+      ];
       [TimeLineTypes.TAG, TimeLineTypes.LIST].forEach(secondType => {
         Object.keys(this.timelines[secondType]).forEach(hashName => {
           if (Array.isArray(this.timelines[secondType][hashName])) {
@@ -155,7 +154,7 @@
     }
 
     get statusCardsContainerWidth (): number {
-      return this.appStatus.documentWidth - 210
+      return this.appStatus.documentWidth - UiWidthCheckConstants.DRAWER_DESKTOP_WIDTH
     }
 
     get waterfallLineCount () {
@@ -193,13 +192,12 @@
 
     @Watch('currentRootStatuses')
     onCurrentRootStatusesChanged () {
-      if (this.isInitLoading) return
-
       this.$nextTick(async () => {
         // load more to show scroll
         // todo maybe we could find a better way to serve this?
         if (this.$refs.timelinesContainer.clientHeight < window.screen.availHeight) {
           this.isInitLoading = true
+          this.isLoading = false
           await this.loadStatuses(true)
           this.isInitLoading = false
         }

@@ -39,6 +39,13 @@
           <mu-switch class="setting-switch" v-model="showSensitiveContentMode" />
         </div>
 
+        <p class="card-label">{{$t($i18nTags.settings.personality_label)}}</p>
+
+        <div class="setting-row">
+          <span class="setting-label primary-read-text-color">Drawer Background Image Source Link：</span>
+          <mu-text-field class="setting-input" placeholder="on developing"/>
+        </div>
+
       </mu-card-actions>
     </mu-card>
   </div>
@@ -74,6 +81,7 @@
 
     localesOptions = [
       { label: 'English', value: I18nLocales.EN },
+      { label: '日本語', value: I18nLocales.JA },
       { label: '简体中文', value: I18nLocales.ZH_CN },
       { label: '繁體中文（香港）', value: I18nLocales.ZH_HK },
       { label: '繁體中文（台灣）', value: I18nLocales.ZH_TW }
@@ -157,6 +165,12 @@
 
         .setting-switch {
           margin-right: 12px;
+        }
+
+        .setting-input {
+          min-height: unset;
+          margin: 0;
+          padding: 0;
         }
       }
 

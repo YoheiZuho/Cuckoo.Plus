@@ -42,9 +42,14 @@ const drawer = {
   [I18nTags.drawer.home]: 'Home',
   [I18nTags.drawer.public]: 'Public',
   [I18nTags.drawer.tag]: 'Tag',
+  [I18nTags.drawer.local]: 'Local',
   [I18nTags.drawer.profile]: 'Profile',
   [I18nTags.drawer.settings]: 'Settings',
-  [I18nTags.drawer.toHostInstance]: 'Open Current Instance Site'
+  [I18nTags.drawer.logout]: 'Logout',
+  [I18nTags.drawer.toHostInstance]: 'Open Current Instance Site',
+  [I18nTags.drawer.search_input_placeholder]: 'Search',
+  [I18nTags.drawer.search_result_people_label]: 'People',
+  [I18nTags.drawer.search_result_hashtag_label]: 'HashTag'
 }
 
 const settings = {
@@ -55,7 +60,8 @@ const settings = {
   [I18nTags.settings.show_sensitive_media_files]: 'Always show media marked as sensitive:',
   [I18nTags.settings.auto_load_new_status]: 'Always auto load new post:',
   [I18nTags.settings.stream_label]: 'Stream',
-  [I18nTags.settings.media_label]: 'Media'
+  [I18nTags.settings.media_label]: 'Media',
+  [I18nTags.settings.personality_label]: 'Personality'
 }
 
 const timeLines = {
@@ -66,7 +72,12 @@ const timeLines = {
 const postStatusDialog = {
   [I18nTags.postStatusDialog.do_discard_message_confirm]: 'Discard this post?',
   [I18nTags.postStatusDialog.do_keep_message]: 'KEEP',
-  [I18nTags.postStatusDialog.do_discard_message]: 'DISCARD'
+  [I18nTags.postStatusDialog.do_discard_message]: 'DISCARD',
+  [I18nTags.postStatusDialog.text_character_limit_exceed]: 'Text character limit of 500 exceeded'
+}
+
+const notifications = {
+  [I18nTags.notifications.someone_followed_you]: '{displayName} followed you'
 }
 
 export default {
@@ -76,5 +87,6 @@ export default {
   ...timeLines,
   ...drawer,
   ...settings,
-  ...postStatusDialog
+  ...postStatusDialog,
+  ...notifications
 }

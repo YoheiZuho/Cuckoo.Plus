@@ -11,6 +11,7 @@ export namespace cuckoostore {
       home: Array<string>
       public: Array<string>
       direct: Array<string>
+      local: Array<string>
       tag: {
         [index: string]: Array<string>
       }
@@ -32,6 +33,10 @@ export namespace cuckoostore {
 
     notifications: Array<mastodonentities.Notification>
 
+    relationships: {
+      [id: string]: mastodonentities.Relationship
+    }
+
     customEmojis: Array<mastodonentities.Emoji>
 
     appStatus: {
@@ -43,6 +48,7 @@ export namespace cuckoostore {
         home: Array<string>
         public: Array<string>
         direct: Array<string>
+        local: Array<string>
         tag: {
           [index: string]: Array<string>
         }

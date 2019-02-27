@@ -20,7 +20,7 @@
           <img :src="currentUserAccount.avatar_static">
         </mu-avatar>
         <div class="user-and-status-info">
-          <a class="user-name primary-read-text-color" v-html="formatAccountDisplayName(currentUserAccount)"></a>
+          <a class="user-name primary-read-text-color" v-html="currentUserAccount.display_name"></a>
           <div class="visibility-row">
             <div class="arrow-container">
               <svg viewBox="0 0 48 48" height="100%" width="100%">
@@ -65,6 +65,10 @@
             <mu-icon class="secondary-read-text-color" value="link" />
           </mu-button>
         </div>
+
+        <div class="content-length-indicator secondary-read-text-color">
+          {{textContentValue.length}}/500
+        </div>
       </div>
     </section>
 
@@ -85,7 +89,7 @@
   import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
   import { State, Getter, Action } from 'vuex-class'
   import { UiWidthCheckConstants, VisibilityTypes } from '@/constant'
-  import { getVisibilityDescInfo, formatAccountDisplayName } from '@/util'
+  import { getVisibilityDescInfo } from '@/util'
   import VisibilitySelectPopOver from '@/components/VisibilitySelectPopOver'
   import Input from '@/components/Input'
   import { mastodonentities } from "../interface";
@@ -113,9 +117,9 @@
 
     $i18nTags
 
-    getVisibilityDescInfo = getVisibilityDescInfo
+    $toast
 
-    formatAccountDisplayName = formatAccountDisplayName
+    getVisibilityDescInfo = getVisibilityDescInfo
 
     visibility: string = VisibilityTypes.PUBLIC
 
@@ -196,6 +200,10 @@
 
     async onSubmitNewStatus () {
       if (!this.shouldEnableSubmitButton) return
+
+      if (this.textContentValue.length > 500) {
+        return this.$toast.error(this.$t(this.$i18nTags.postStatusDialog.text_character_limit_exceed))
+      }
 
       const formData = {
         status: this.textContentValue,
@@ -332,6 +340,17 @@
         height: 187px;
         padding: 0 16px;
         max-height: 373px;
+      }
+
+      .bottom-area {
+        display: flex;
+        justify-content: space-between;
+
+        .content-length-indicator {
+          line-height: 48px;
+          font-size: 16px;
+          margin-right: 20px;
+        }
       }
 
     }

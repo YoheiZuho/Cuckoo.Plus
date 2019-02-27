@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { getTargetStatusesList } from '@/util'
 import { ThemeNames } from '@/constant'
 import { cuckoostore } from '@/interface'
@@ -56,7 +57,6 @@ export default {
 
   unShiftStreamStatusesPool (state: cuckoostore.stateInfo, { newStatusIdList, timeLineType, hashName }) {
     const targetStatusesPool = getTargetStatusesList(state.appStatus.streamStatusesPool, timeLineType, hashName)
-
     newStatusIdList = newStatusIdList.filter(id => {
       return targetStatusesPool.indexOf(id) === -1
     })

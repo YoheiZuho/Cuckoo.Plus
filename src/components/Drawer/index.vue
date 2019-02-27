@@ -2,6 +2,8 @@
   <mu-drawer class="cuckoo-drawer default-theme-bg-color primary-read-text-color" :open.sync="appStatus.isDrawerOpened" :style="drawerStyle"
              :docked="shouldDrawerDocked" :z-depth="shouldDrawerDocked ? 0 : 16">
 
+    <search />
+
     <mu-divider />
 
     <mu-list :value="currentListValue" toggle-nested>
@@ -41,6 +43,9 @@
       <mu-list-item button :to="$routersInfo.settings.path" @click="onSecondaryItemClick">
         <mu-list-item-title class="secondary-read-text-color">{{$t($i18nTags.drawer.settings)}}</mu-list-item-title>
       </mu-list-item>
+      <mu-list-item button @click="onLogoutClick">
+        <mu-list-item-title class="secondary-read-text-color">{{$t($i18nTags.drawer.logout)}}</mu-list-item-title>
+      </mu-list-item>
     </mu-list>
 
     <div class="bottom-info-area secondary-read-text-color">
@@ -60,6 +65,8 @@
   import { State, Mutation, Action } from 'vuex-class'
   import { isBaseTimeLine } from '@/util'
   import { TimeLineTypes, UiWidthCheckConstants, RoutersInfo, I18nTags } from '@/constant'
+  import Search from './Search'
+  import store from '@/store'
 
   const baseRouterInfoList = [
     {
@@ -75,30 +82,43 @@
       to: '/timelines/public'
     },
     {
+      value: TimeLineTypes.LOCAL,
+      title: I18nTags.drawer.local,
+      icon: 'people',
+      to: '/timelines/local'
+    },
+    {
       value: TimeLineTypes.TAG,
       title: I18nTags.drawer.tag,
       icon: 'loyalty',
       to: '/timelines/tag',
-      hashList: ['kimermark']
+      hashList: []
     },
     {
       value: 'profile',
       title: I18nTags.drawer.profile,
-      icon: 'person',
-      to: ''
+      icon: 'person'
     }
   ]
 
-  @Component({})
+  @Component({
+    components: {
+      'search': Search
+    }
+  })
   class Drawer extends Vue {
 
     $route
 
     $router
 
+    $routersInfo
+
     $progress
 
     $toast
+
+    @State('currentUserAccount') currentUserAccount
 
     @State('appStatus') appStatus
 
@@ -132,11 +152,11 @@
       if (this.shouldDrawerDocked) {
         return {
           top: '64px',
-          width: '210px'
+          width: `${UiWidthCheckConstants.DRAWER_DESKTOP_WIDTH}px`
         }
       } else {
         return {
-          width: '300px'
+          width: `${UiWidthCheckConstants.DRAWER_MOBILE_WIDTH}px`
         }
       }
     }
@@ -152,17 +172,30 @@
     }
 
     async onBaseRouteItemClick (clickedRouterValue: string) {
-      const targetPath = baseRouterInfoList.find(routerInfo => routerInfo.value === clickedRouterValue).to
+      if (clickedRouterValue === 'profile') {
+        // todo
+        // this.$router.push({
+        //   name: this.$routersInfo.accounts.name,
+        //   params: {
+        //     accountId: this.currentUserAccount.id
+        //   }
+        // })
 
-      if (isBaseTimeLine(clickedRouterValue) && (targetPath === this.$route.path)) {
-        this.fetchTimeLineStatuses(clickedRouterValue)
+        return window.open(this.currentUserAccount.url, '_blank')
+      } else {
+
+        const targetPath = baseRouterInfoList.find(routerInfo => routerInfo.value === clickedRouterValue).to
+
+        if (isBaseTimeLine(clickedRouterValue) && (targetPath === this.$route.path)) {
+          this.fetchTimeLineStatuses(clickedRouterValue)
+        }
+
+        if (!this.shouldDrawerDocked) this.updateDrawerOpenStatus(false)
+
+        this.$router.push(targetPath)
+
+        window.scrollTo(0, 0)
       }
-
-      if (!this.shouldDrawerDocked) this.updateDrawerOpenStatus(false)
-
-      this.$router.push(targetPath)
-
-      window.scrollTo(0, 0)
     }
 
     async onHashRouteItemClick (clickedRouterValue: string, hashName: string) {
@@ -182,6 +215,13 @@
     onSecondaryItemClick () {
       if (!this.shouldDrawerDocked) this.updateDrawerOpenStatus(false)
       window.scrollTo(0, 0)
+    }
+
+    onLogoutClick () {
+      localStorage.removeItem('clientId')
+      localStorage.removeItem('clientSecret')
+      localStorage.removeItem('accessToken')
+      location.href="/";
     }
 
     onDeleteHash (hashName: string) {
@@ -241,9 +281,12 @@
 </style>
 
 <style lang="less">
-  @import "../assets/variable";
+  @import "../../assets/variable";
 
   .cuckoo-drawer {
+    background: url("https://i.imgur.com/vKv5bn5.png") no-repeat left bottom;
+    background-size: 42%;
+
     .mu-item-wrapper {
       -webkit-transition: background-color .3s cubic-bezier(0,0,0.2,1);
       -moz-transition: background-color .3s cubic-bezier(0,0,0.2,1);

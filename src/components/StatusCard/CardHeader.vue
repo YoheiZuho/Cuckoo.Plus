@@ -3,15 +3,15 @@
                   @mouseover="shouldShowHeaderActionButtonGroup = true"
                   @mouseout="shouldShowHeaderActionButtonGroup = false">
     <div class="left-area">
-      <mu-avatar class="status-account-avatar" slot="avatar" size="34">
+      <mu-avatar @click="onCheckUserAccountPage" class="status-account-avatar" slot="avatar" size="34">
         <img :src="status.account.avatar_static">
       </mu-avatar>
       <div class="user-and-status-info">
-        <a class="user-name primary-read-text-color" :style="userNameAreaStyle">
-          <span class="display-name" v-html="formatAccountDisplayName(status.account)"></span>
+        <a @click="onCheckUserAccountPage" class="user-name primary-read-text-color">
+          <span class="display-name" v-html="getAccountDisplayName(status.account)"></span>
           <span class="at-name secondary-read-text-color">@{{getAccountAtName(status.account)}}</span>
         </a>
-        <div class="visibility-row secondary-read-text-color">
+        <div ref="visibilityInfo" class="visibility-row secondary-read-text-color">
           <div class="arrow-container">
             <svg viewBox="0 0 48 48" height="100%" width="100%">
               <path class="header-svg-fill" d="M20 14l10 10-10 10z" />
@@ -53,13 +53,12 @@
   import { Vue, Component, Prop } from 'vue-property-decorator'
   import { Getter, State, Action } from 'vuex-class'
   import * as moment from 'moment'
-  import { formatAccountDisplayName } from '@/util'
   import { mastodonentities } from '@/interface'
 
   @Component({})
   class CardHeader extends Vue {
 
-    @Prop() status
+    @Prop() status: mastodonentities.Status
 
     $router
 
@@ -73,9 +72,11 @@
 
     $refs: {
       cardHeader: any
+      visibilityInfo: any
       moreOperationTriggerBtn: any
     }
 
+    @Getter('getAccountDisplayName') getAccountDisplayName
     @Getter('getAccountAtName') getAccountAtName
     @Getter('isOAuthUser') isOAuthUser
 
@@ -83,25 +84,24 @@
 
     @Action('deleteStatus') deleteStatus
 
-    userNameAreaStyle = {}
-
     shouldShowHeaderActionButtonGroup = false
 
     shouldOpenMoreOperationPopOver = false
 
     moreOperationTriggerBtn: any = null
 
-    formatAccountDisplayName = formatAccountDisplayName
-
     mounted () {
       if (this.isOAuthUser) {
         this.moreOperationTriggerBtn = this.$refs.moreOperationTriggerBtn
       }
-      this.setMainStatusUserNameAreaStyle()
     }
 
     onOpenMoreOperationPopOver () {
       this.shouldOpenMoreOperationPopOver = true
+    }
+
+    onCheckUserAccountPage () {
+      window.open(this.status.account.url, "_blank")
     }
 
     onCheckStatusInSinglePage () {
@@ -126,26 +126,6 @@
       }
     }
 
-    /**
-     * @desc set max-width
-     * */
-    setMainStatusUserNameAreaStyle () {
-      const cardWidth = this.$refs.cardHeader.clientWidth
-      const headerPadding = 16
-      const avatarWidth = 34
-      const avatarRightMargin = 8
-      const visibilityInfoWidth = 50
-      const rightAreaWidth = 50
-      const leftToRightMargin = 5
-
-      const maxWidth = cardWidth - headerPadding * 2 - avatarWidth - avatarRightMargin -
-        visibilityInfoWidth - rightAreaWidth - leftToRightMargin
-
-      this.userNameAreaStyle = {
-        maxWidth: `${maxWidth}px`
-      }
-    }
-
     getFromNowTime (createdAt: string) {
       return moment(createdAt).fromNow(true)
     }
@@ -167,10 +147,12 @@
       .status-account-avatar {
         margin-right: 8px;
         cursor: pointer;
+        flex-shrink: 0;
       }
 
       .user-and-status-info {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
 
         .user-name {

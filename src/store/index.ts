@@ -30,6 +30,7 @@ const state: cuckoostore.stateInfo = {
     home: [],
     public: [],
     direct: [],
+    local: [],
     tag: {},
     list: {}
   },
@@ -41,6 +42,8 @@ const state: cuckoostore.stateInfo = {
   customEmojis: getLocalSetting('customEmojis', []),
 
   notifications: [],
+
+  relationships: {},
 
   appStatus: {
     documentWidth: document.body.clientWidth,
@@ -55,6 +58,7 @@ const state: cuckoostore.stateInfo = {
       home: [],
       public: [],
       direct: [],
+      local: [],
       tag: {},
       list: {}
     },

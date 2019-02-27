@@ -3,7 +3,7 @@
 
     <keep-alive>
       <div class="notification-list" v-show="!shouldShowTargetStatus">
-        <mu-load-more loading-text="" @load="loadNotifications(true)" :loading="isLoadingNotifications" v-loading="isLoadingTargetStatus">
+        <mu-load-more loading-text="" @load="loadNotifications(true)" :loading="isLoadingNotifications">
           <mu-flex v-if="!hideHeader" class="panel-header" calign-items="center">
             <mu-flex justify-content="start" fill>
               <mu-sub-header class="secondary-read-text-color">Notifications</mu-sub-header>
@@ -16,18 +16,8 @@
           </mu-flex>
 
           <mu-list textline="three-line">
-            <mu-list-item :style="notificationCardStyle" class="notification-card dialog-theme-bg-color"
-                          v-for="(notification, index) in notifications" :key="index" @click="onNotificationCardClick(notification)" avatar button>
-              <mu-list-item-action>
-                <mu-avatar>
-                  <img :src="notification.account.avatar_static" />
-                </mu-avatar>
-              </mu-list-item-action>
-              <mu-list-item-content>
-                <mu-list-item-title class="primary-read-text-color" v-html="formatAccountDisplayName(notification.account)"></mu-list-item-title>
-                <mu-list-item-sub-title class="secondary-read-text-color">{{getNotificationSubTitle(notification)}}</mu-list-item-sub-title>
-              </mu-list-item-content>
-            </mu-list-item>
+            <notification-card :notification="notification" @updateCurrentCheckStatus="onUpdateCurrentCheckStatus"
+                               v-for="(notification, index) in notifications" :key="index"/>
           </mu-list>
 
         </mu-load-more>
@@ -50,15 +40,17 @@
 
 <script lang="ts">
   import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-  import { State, Action, Getter } from 'vuex-class'
+  import { State, Action } from 'vuex-class'
   import { NotificationTypes, ThemeNames } from '@/constant'
   import StatusCard from '@/components/StatusCard'
+  import NotificationCard from './Card'
   import { mastodonentities } from '@/interface'
-  import { extractText, prepareRootStatus, formatAccountDisplayName } from "@/util"
+  import { prepareRootStatus, formatHtml } from "@/util"
 
   @Component({
     components: {
       'status-card': StatusCard,
+      'notification-card': NotificationCard
     }
   })
   class Notifications extends Vue {
@@ -69,19 +61,16 @@
 
     @Action('updateNotifications') updateNotifications
 
-    @State('appStatus') appStatus
-
     @State('notifications') notifications: Array<mastodonentities.Notification>
 
     isLoadingNotifications: boolean = false
 
+    // todo
     isLoadingTargetStatus: boolean = false
 
     shouldShowTargetStatus: boolean = false
 
     currentCheckStatus: mastodonentities.Status = null
-
-    formatAccountDisplayName = formatAccountDisplayName
 
     @Watch('isLoadingNotifications')
     onLoadingNotificationStatusChanged (toValue) {
@@ -91,27 +80,6 @@
     @Watch('shouldShowTargetStatus')
     onShouldShowTargetStatusChanged (val) {
       this.$emit('shouldShowTargetStatusChanged', val)
-    }
-
-    get notificationCardStyle () {
-      const themeToStyle = {
-        [ThemeNames.GOOGLE_PLUS]: {
-          backgroundColor: '#fff'
-        },
-        [ThemeNames.DARK]: {
-
-        }
-      }
-
-      return themeToStyle[this.appStatus.settings.theme]
-    }
-
-    getNotificationSubTitle (notification) {
-      if (notification.type === NotificationTypes.FOLLOW) {
-        return notification.type
-      } else {
-        return notification.type + ": " + extractText(notification.status.content)
-      }
     }
 
     async loadNotifications (isLoadMore, isFetchMore) {
@@ -125,23 +93,10 @@
       this.isLoadingNotifications = false
     }
 
-    async onNotificationCardClick (notification: mastodonentities.Notification) {
-      if (!notification.status) {
-
-      } else {
-        this.isLoadingTargetStatus = true
-
-        const targetStatus = await prepareRootStatus(notification.status)
-
-        this.isLoadingTargetStatus = false
-
-        this.currentCheckStatus = targetStatus
-
-        this.shouldShowTargetStatus = true
-      }
+    onUpdateCurrentCheckStatus (targetStatus: mastodonentities.Status) {
+      this.currentCheckStatus = targetStatus
+      this.shouldShowTargetStatus = true
     }
-
-
   }
 
   export default Notifications
@@ -159,13 +114,6 @@
     .notification-list {
       padding: 8px;
       height: calc(100vh - 56px);
-
-      .notification-card {
-        margin: 2px 0;
-        box-shadow: 0 1px 2px rgba(0,0,0,.2);
-        border-radius: 3px;
-        cursor: pointer;
-      }
     }
 
     .notification-status-check-area {
@@ -178,6 +126,31 @@
         .status-card-container {
           height: 100%;
         }
+      }
+    }
+  }
+</style>
+
+<style lang="less">
+  .notification-panel-container {
+    .notification-list {
+
+      .mu-item-wrapper.hover {
+        background-color: inherit !important;
+        cursor: default;
+      }
+
+      .notification-content {
+        > p { display: inline }
+        .h-card:hover { text-decoration: underline }
+      }
+
+      .mu-item-sub-title {
+        p { margin: 0 }
+      }
+
+      .mu-avatar {
+        margin: 0;
       }
     }
   }

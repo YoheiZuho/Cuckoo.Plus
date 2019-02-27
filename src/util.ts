@@ -3,6 +3,7 @@ import { TimeLineTypes, RoutersInfo, I18nTags, VisibilityTypes } from '@/constan
 import { Route } from "vue-router"
 import Formatter from "./formatter"
 import { mastodonentities } from "@/interface"
+import * as _ from 'underscore'
 
 export function patchApiUri (uri: string): string {
   const targetServerUri = store.state.mastodonServerUri || 'https://pawoo.net'
@@ -21,7 +22,7 @@ export function generateUniqueKey () {
 }
 
 export function isBaseTimeLine (timeLineType: string): boolean {
-  return [TimeLineTypes.HOME, TimeLineTypes.PUBLIC, TimeLineTypes.DIRECT].indexOf(timeLineType) !== -1
+  return [TimeLineTypes.HOME, TimeLineTypes.PUBLIC, TimeLineTypes.DIRECT, TimeLineTypes.LOCAL].indexOf(timeLineType) !== -1
 }
 
 export function getTimeLineTypeAndHashName (route: Route) {
@@ -112,15 +113,11 @@ export function formatHtml(html: string, options: { externalEmojis } = { externa
 
   walkTextNodes(parentNode.content, (parentNode, textNode) => {
     const spanNode = document.createElement('span')
-    spanNode.innerHTML = formatter.format(textNode.textContent)
+    spanNode.innerHTML = formatter.format(_.escape(textNode.textContent))
     parentNode.replaceChild(spanNode, textNode)
   })
 
   return parentNode.innerHTML
-}
-
-export function formatStatusContent (status: mastodonentities.Status) {
-  return formatHtml(status.content, { externalEmojis: status.emojis })
 }
 
 export function formatAccountDisplayName (account: mastodonentities.Account) {
@@ -139,6 +136,34 @@ export function extractText(html: string): string {
   })
 
   return text
+}
+
+const maxImageSize = 7.8 * 1024 * 1024
+export async function resetImageFileSizeForUpload (file: File) {
+  if (file.size < maxImageSize) return new Promise(r => r(file))
+
+  const oldImage = new Image()
+  oldImage.src = window.URL.createObjectURL(file)
+
+  // todo set to 1280 width for now
+  const newWidth = 1280
+
+  return new Promise(resolve => {
+    oldImage.onload = () => {
+      const newHeight = oldImage.height * newWidth / oldImage.width
+      const canvas = document.createElement('canvas')
+      const canvasContext = canvas.getContext('2d')
+
+      canvas.width = newWidth
+      canvas.height = newHeight
+
+      canvasContext.drawImage(oldImage, 0, 0, newWidth, newHeight)
+
+      canvas.toBlob((blob) => {
+        resolve(blob)
+      })
+    }
+  })
 }
 
 function walkTextNodes(node, textNodeHandler) {

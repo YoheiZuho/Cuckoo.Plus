@@ -1,5 +1,6 @@
 export const I18nLocales = {
   EN: 'en',
+  JA: 'ja',
   ZH_CN: 'zh-cn',
   ZH_HK: 'zh-hk',
   ZH_TW: 'zh-tw'
@@ -43,9 +44,14 @@ export const I18nTags = {
     home: 'drawer_home',
     public: 'drawer_public',
     tag: 'drawer_tag',
+    local: 'drawer_local',
     profile: 'drawer_profile',
     settings: 'drawer_settings',
-    toHostInstance: 'drawer_to_host_instance'
+    logout: 'drawer_logout',
+    toHostInstance: 'drawer_to_host_instance',
+    search_input_placeholder: 'drawer_search_input_placeholder',
+    search_result_people_label: 'drawer_search_result_people_label',
+    search_result_hashtag_label: 'drawer_search_result_hashtag_label'
   },
 
   settings: {
@@ -56,7 +62,8 @@ export const I18nTags = {
     show_sensitive_media_files: 'settings_show_sensitive_media_files',
     auto_load_new_status: 'settings_auto_load_new_status',
     stream_label: 'settings_stream_label',
-    media_label: 'settings_media_label'
+    media_label: 'settings_media_label',
+    personality_label: 'settings_personality_label'
   },
 
   header: {
@@ -80,6 +87,11 @@ export const I18nTags = {
   postStatusDialog: {
     do_discard_message_confirm: 'post_status_dialog_do_discard_message_confirm',
     do_keep_message: 'post_status_dialog_do_keep_message',
-    do_discard_message: 'post_status_dialog_do_discard_message'
+    do_discard_message: 'post_status_dialog_do_discard_message',
+    text_character_limit_exceed: 'post_status_dialog_text_character_limit_exceed'
+  },
+
+  notifications: {
+    someone_followed_you: 'notifications_someone_followed_you'
   }
 }
